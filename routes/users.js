@@ -56,6 +56,17 @@ router.get('/', auth, async (req, res) => {
     }
   });
 
+  router.get('/mentors', auth, async (req, res) => {
+    try {
+      // Find users with role equal to 'mentor'
+      const mentors = await User.find({ role: 'mentor' }).select('-password');
+      res.json(mentors);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  });
+
 module.exports = router;
 
-// 456002120006076
+//456002120006076

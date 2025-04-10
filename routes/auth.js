@@ -72,8 +72,8 @@ router.post('/register', upload.single('profileImage'), async (req, res) => {
       otpExpires,       // OTP expiration time
     };
 
-    // Sign a JWT with the payload (expires in 15 minutes)
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' });
+    // Sign a JWT with the payload (expires based on environment variable or default)
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7h' });
 
     // Send the OTP email to the user
     const emailSubject = 'Your Email Verification Code';
@@ -115,7 +115,7 @@ router.post('/login', async (req, res) => {
       jwt.sign(
         payload,
         process.env.JWT_SECRET,
-        { expiresIn: 1296000 },
+        { expiresIn: process.env.JWT_EXPIRES_IN || '7h' },
         (err, token) => {
           if (err) throw err;
           // Return token along with user details (excluding password)
@@ -271,7 +271,7 @@ router.post('/verify-otp', async (req, res) => {
     jwt.sign(
       loginPayload,
       process.env.JWT_SECRET,
-      { expiresIn: 1296000 },
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' },
       (err, loginToken) => {
         if (err) throw err;
         res.json({
